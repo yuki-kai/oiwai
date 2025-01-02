@@ -1,59 +1,71 @@
 import { db } from "@/firebaseConfig";
-import { Link } from "expo-router";
+import { Link, router, useRouter } from "expo-router";
 import { collection, getDocs, query } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AuthContext } from "@/utils/authContext";
+import AddButton from "@/components/AddButton";
+import { CelebrationRepository } from "@/repositories/celebration.repository";
+import { CelebrationDto } from "@/types/celebration";
+import { useIsFocused } from "@react-navigation/native";
+// import { useRouter } from "expo-router";
 
 export default function TabIndexScreen() {
   const { currentUser } = useContext(AuthContext);
-  const [tests, setTests] = useState<any[]>([]);
+  const [celebrations, setCelebrations] = useState<CelebrationDto[]>([]);
+  const isFocused = useIsFocused();
+  const router = useRouter();
 
   useEffect(() => {
-    const collectionRef = collection(db, "users");
-    getDocs(query(collectionRef)).then((docs) => {
-      setTests(docs.docs.map((doc) => doc.data()));
-    })
-  }, []);
+    if (!currentUser) return;
+    const celebrationRepository = new CelebrationRepository(currentUser.uid);
+    celebrationRepository.getCelebrationList().then((celebrationList) => {
+      setCelebrations(celebrationList);
+    });
+  }, [currentUser?.uid, isFocused]);
+
+  const handleAddCelebration = (): void => {
+    router.push("/add");
+  };
 
   return (
-    <View>
-      <Link href='/details/hoge'>detail</Link>
-      <Text>{ currentUser?.uid ?? "ユーザ情報なし" }</Text>
+    <View style={styles.container}>
+      <Text style={styles.celebrationDate}>{ currentUser?.uid }</Text>
       <FlatList
-        data={tests}
-        renderItem={({ item }: { item: any }) => (
-          CelebrationCard({ celebration: item })
+        data={celebrations}
+        renderItem={({ item }: { item: CelebrationDto }) => (
+          <TouchableOpacity
+            style={styles.celebrationCard}
+            onPress={() => router.push({
+              pathname: "/detail/[docId]",
+              params: { docId: item.docId! }
+            })}
+          >
+            <View>
+              <Text style={styles.celebrationTitle}>{ item.dayName }</Text>
+              <Text style={styles.celebrationDate}>{ item.date }</Text>
+            </View>
+          </TouchableOpacity>
         )}
-        ListEmptyComponent={ ListEmptyCard }
+        ListEmptyComponent={
+          <View>
+            <Text style={styles.listEmptyCard}>表示するお祝いがありません。</Text>
+            <Text style={styles.listEmptyCard}>記念日を追加してみましょう！</Text>
+          </View>
+        }
+      />
+      <AddButton
+        label="記念日を追加"
+        handleButtonPress={handleAddCelebration}
       />
     </View>
   );
 }
 
-function CelebrationCard({ celebration }: { celebration: any }) {
-  return (
-    <TouchableOpacity
-			style={styles.celebrationCard}
-			onPress={() => {}}
-		>
-			<View>
-      	<Text style={styles.celebrationTitle}>{ celebration.createdAt.toString() }</Text>
-			</View>
-    </TouchableOpacity>
-  );
-}
-
-function ListEmptyCard() {
-  return (
-		<View>
-			<Text style={styles.listEmptyCard}>表示するお祝いがありません。</Text>
-			<Text style={styles.listEmptyCard}>記念日を追加してみましょう！</Text>
-		</View>
-  );
-}
-
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   celebrationCard: {
     backgroundColor: "#ffffff",
 		flexDirection: "row",

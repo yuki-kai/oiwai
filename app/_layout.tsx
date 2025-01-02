@@ -5,6 +5,7 @@ import { PaperProvider } from 'react-native-paper';
 import { AuthProvider } from '@/utils/authContext';
 import { ThemeProvider } from '@/utils/themeContext';
 import { themes } from '@/constants/ColorTheme';
+import { useTheme } from '@/hooks/useTheme';
 import 'react-native-reanimated';
 import 'expo-dev-client';
 
@@ -12,6 +13,7 @@ import 'expo-dev-client';
 // SplashScreen.preventAutoHideAsync(); // TODO: これあるとsプラッシュから次に進まない
 
 export default function RootLayout() {
+  const { theme } = useTheme();
 
   return (
     <ThemeProvider initialTheme={themes.default}>
@@ -21,6 +23,14 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" options={{
               headerShown: false,
               headerTitle: "ホーム"
+            }} />
+            <Stack.Screen name="add" options={{
+              headerShown: true,
+              headerTitle: "追加画面",
+              headerTintColor: theme.Text.primary,
+              headerStyle: {
+                backgroundColor: theme.Backgroud.primary,
+              },
             }} />
             <Stack.Screen name="+not-found" />
           </Stack>
