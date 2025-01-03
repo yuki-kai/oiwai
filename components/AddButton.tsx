@@ -22,7 +22,7 @@ export default function AddButton(props: Props) {
       style={{
         ...styles.addButton,
         backgroundColor: theme.Backgroud.primary,
-        bottom: insets.bottom,
+        bottom: insets.bottom + 20,
       }}
       onPress={handleButtonPress}
     >
