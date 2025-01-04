@@ -38,7 +38,13 @@ export default function TabIndexScreen() {
             style={styles.celebrationCard}
             onPress={() => router.push({
               pathname: "/detail/[docId]",
-              params: { docId: item.docId! }
+              params: {
+                docId: item.docId!,
+                dayName: item.dayName,
+                date: item.date,
+                reminds: JSON.stringify(item.reminds),
+                memo: item.memo,
+              }
             })}
           >
             <View>
