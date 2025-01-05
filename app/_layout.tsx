@@ -6,6 +6,7 @@ import { AuthProvider } from '@/utils/authContext';
 import { ThemeProvider } from '@/utils/themeContext';
 import { themes } from '@/constants/ColorTheme';
 import { useTheme } from '@/hooks/useTheme';
+import * as Notifications from 'expo-notifications';
 import 'react-native-reanimated';
 import 'expo-dev-client';
 
@@ -14,6 +15,15 @@ import 'expo-dev-client';
 
 export default function RootLayout() {
   const { theme } = useTheme();
+
+  // プッシュ通知の受け取り方を設定
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
   return (
     <ThemeProvider initialTheme={themes.default}>

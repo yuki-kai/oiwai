@@ -3,6 +3,7 @@ import { AuthContext } from "@/utils/authContext";
 import { CelebrationRepository } from "../repositories/celebration.repository";
 import { CelebrationDto } from "../types/celebration";
 import { useRouter } from "expo-router";
+import { scheduleRemindNotification } from "../utils/pushNotification";
 
 const useEditCelebration = () => {
   const router = useRouter();
@@ -13,6 +14,7 @@ const useEditCelebration = () => {
     celebrationRepository.editCelebration(celebration)
       .then((docRef) => {
         console.log("成功" + docRef);
+        scheduleRemindNotification(celebration.date, celebration.reminds);
         router.back();
       })
       .catch((error) => {
