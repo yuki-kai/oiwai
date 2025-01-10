@@ -1,0 +1,23 @@
+{
+  "cli": {
+    "version": ">= 14.2.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "production": {
+      "autoIncrement": true
+    },
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "extends": "production",
+      "ios": {
+        "buildConfiguration": "Debug",
+        "simulator": false
+      },
+      "distribution": "internal"
+    }
+  }
+}
