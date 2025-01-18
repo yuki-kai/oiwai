@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
-import { AuthContext } from "@/utils/authContext";
+// import { AuthContext } from "@/utils/authContext";
 import { CelebrationRepository } from "@/repositories/celebration.repository";
 import { CelebrationDto } from "@/types/celebration";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -13,7 +13,7 @@ import { useIsFocused } from "@react-navigation/native";
 
 export default function DetailScreen() {
   // TODO: read数増えるなら props で渡す
-  const { currentUser } = useContext(AuthContext);
+  // const { currentUser } = useContext(AuthContext);
   const {
       docId,
       dayName,
@@ -49,14 +49,14 @@ export default function DetailScreen() {
     ]);
   };
 
-  useEffect(() => {
-    console.log("=== DetailScreen useEffect ===");
-    if (!currentUser || !docId) return;
-    const celebrationRepository = new CelebrationRepository(currentUser.uid);
-    celebrationRepository.getCelebration(docId).then((celebration) => {
-      setCelebration(celebration);
-    });
-  }, [isFocused]);
+  // useEffect(() => {
+  //   console.log("=== DetailScreen useEffect ===");
+  //   if (!currentUser || !docId) return;
+  //   const celebrationRepository = new CelebrationRepository(currentUser.uid);
+  //   celebrationRepository.getCelebration(docId).then((celebration) => {
+  //     setCelebration(celebration);
+  //   });
+  // }, [isFocused]);
 
   return (
     <View style={styles.container}>
