@@ -6,21 +6,31 @@ import AddButton from "@/components/AddButton";
 import { CelebrationRepository } from "@/repositories/celebration.repository";
 import { CelebrationDto } from "@/types/celebration";
 import { useIsFocused } from "@react-navigation/native";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebaseConfig";
 // import { useRouter } from "expo-router";
 
 export default function TabIndexScreen() {
   // const { currentUser } = useContext(AuthContext);
+  const [test, setTest] = useState<string>("なし");
   const [celebrations, setCelebrations] = useState<CelebrationDto[]>([]);
   const isFocused = useIsFocused();
   const router = useRouter();
 
-  // useEffect(() => {
+  useEffect(() => {
+    // awaitでforestoreからデータを取得する
+    (async() => {
+      const docSnap = await getDoc(doc(db, "tests/test"));
+      setTest(docSnap!.data()!.test ?? "hoge");
+    })();
+
+
     // if (!currentUser) return;
     // const celebrationRepository = new CelebrationRepository(currentUser.uid);
     // celebrationRepository.getCelebrationList().then((celebrationList) => {
     //   setCelebrations(celebrationList);
     // });
-  // }, [currentUser?.uid, isFocused]);
+  }, []);
 
   const handleAddCelebration = (): void => {
     router.push("/add");
@@ -28,7 +38,7 @@ export default function TabIndexScreen() {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.celebrationDate}>{ currentUser?.uid }</Text> */}
+      <Text style={styles.celebrationDate}>{ test }</Text>
       <FlatList
         data={celebrations}
         renderItem={({ item }: { item: CelebrationDto }) => (
