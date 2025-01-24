@@ -3,7 +3,7 @@ import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { Stack } from 'expo-router';
 import { PaperProvider } from 'react-native-paper';
-// import { AuthProvider } from '@/utils/authContext';
+import { AuthProvider } from '@/utils/authContext';
 import { ThemeProvider } from '@/utils/themeContext';
 import { themes } from '@/constants/ColorTheme';
 import { useTheme } from '@/hooks/useTheme';
@@ -28,7 +28,7 @@ Notifications.setNotificationHandler({
 
   return (
     <ThemeProvider initialTheme={themes.default}>
-      {/* <AuthProvider> */}
+      <AuthProvider>
         <PaperProvider>
           <Stack>
             <Stack.Screen name="(tabs)" options={{
@@ -47,7 +47,7 @@ Notifications.setNotificationHandler({
           </Stack>
           <StatusBar style="auto" />
         </PaperProvider>
-      {/* </AuthProvider> */}
+      </AuthProvider>
     </ThemeProvider>
   );
 }

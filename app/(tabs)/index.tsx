@@ -1,28 +1,30 @@
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-// import { AuthContext } from "@/utils/authContext";
+import { AuthContext } from "@/utils/authContext";
 import AddButton from "@/components/AddButton";
 import { CelebrationRepository } from "@/repositories/celebration.repository";
 import { CelebrationDto } from "@/types/celebration";
 import { useIsFocused } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/firebaseConfig";
+// import { db } from "@/firebaseConfig";
 // import { useRouter } from "expo-router";
 
 export default function TabIndexScreen() {
-  // const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
   const [test, setTest] = useState<string>("なし");
   const [celebrations, setCelebrations] = useState<CelebrationDto[]>([]);
   const isFocused = useIsFocused();
   const router = useRouter();
 
   useEffect(() => {
-    // awaitでforestoreからデータを取得する
-    (async() => {
-      const docSnap = await getDoc(doc(db, "tests/test"));
-      setTest(docSnap!.data()!.test ?? "hoge");
-    })();
+    console.log(`===== currentUser =====`);
+    console.log(currentUser?.uid);
+  //   // awaitでforestoreからデータを取得する
+  //   (async() => {
+  //     const docSnap = await getDoc(doc(db, "tests/test"));
+  //     setTest(docSnap!.data()!.test ?? "hoge");
+    // })();
 
 
     // if (!currentUser) return;
@@ -30,7 +32,7 @@ export default function TabIndexScreen() {
     // celebrationRepository.getCelebrationList().then((celebrationList) => {
     //   setCelebrations(celebrationList);
     // });
-  }, []);
+  }, [currentUser]);
 
   const handleAddCelebration = (): void => {
     router.push("/add");
@@ -38,7 +40,7 @@ export default function TabIndexScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.celebrationDate}>{ test }</Text>
+      <Text style={styles.celebrationDate}>{ currentUser?.uid }</Text>
       <FlatList
         data={celebrations}
         renderItem={({ item }: { item: CelebrationDto }) => (

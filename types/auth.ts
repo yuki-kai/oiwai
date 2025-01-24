@@ -1,5 +1,6 @@
-import { User } from 'firebase/auth';
+// import { User } from 'firebase/auth';
+import { FirebaseAuthTypes }  from '@react-native-firebase/auth';
 
 export type AuthContextType = {
-	currentUser: User | null | undefined;
+	currentUser: FirebaseAuthTypes.User | null | undefined;
 };
