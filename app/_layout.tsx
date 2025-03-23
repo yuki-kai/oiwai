@@ -5,6 +5,7 @@ import { Stack } from 'expo-router';
 import { PaperProvider } from 'react-native-paper';
 import { AuthProvider } from '@/utils/authContext';
 import { ThemeProvider } from '@/utils/themeContext';
+import { BottomSheetModalProvider } from '@/utils/BottomSheetModalContext';
 import { themes } from '@/constants/ColorTheme';
 import { useTheme } from '@/hooks/useTheme';
 import * as Notifications from 'expo-notifications';
@@ -29,24 +30,26 @@ Notifications.setNotificationHandler({
   return (
     <ThemeProvider initialTheme={themes.default}>
       <AuthProvider>
-        <PaperProvider>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{
-              headerShown: false,
-              headerTitle: "ホーム"
-            }} />
-            <Stack.Screen name="add" options={{
-              headerShown: true,
-              headerTitle: "追加画面",
-              headerTintColor: theme.Text.primary,
-              headerStyle: {
-                backgroundColor: theme.Backgroud.primary,
-              },
-            }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-        </PaperProvider>
+        <BottomSheetModalProvider>
+          <PaperProvider>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{
+                headerShown: false,
+                headerTitle: "ホーム"
+              }} />
+              <Stack.Screen name="add" options={{
+                headerShown: true,
+                headerTitle: "追加画面",
+                headerTintColor: theme.Text.primary,
+                headerStyle: {
+                  backgroundColor: theme.Backgroud.primary,
+                },
+              }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </PaperProvider>
+        </BottomSheetModalProvider>
       </AuthProvider>
     </ThemeProvider>
   );

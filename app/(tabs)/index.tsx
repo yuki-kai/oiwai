@@ -1,61 +1,39 @@
 import { useRouter } from "expo-router";
-import { useContext, useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React,{ useContext, useEffect, useState } from "react";
+import { Button, FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AuthContext } from "@/utils/authContext";
+import { BottomSheetModalContext } from "@/utils/BottomSheetModalContext";
 import AddButton from "@/components/AddButton";
 import { CelebrationRepository } from "@/repositories/celebration.repository";
 import { CelebrationDto } from "@/types/celebration";
 import { useIsFocused } from "@react-navigation/native";
-import { doc, getDoc } from "firebase/firestore";
+import { useCelebration } from "@/hooks/useCelebration";
+
 // import { db } from "@/firebaseConfig";
 // import { useRouter } from "expo-router";
 
 export default function TabIndexScreen() {
-  const { currentUser } = useContext(AuthContext);
-  const [test, setTest] = useState<string>("なし");
-  const [celebrations, setCelebrations] = useState<CelebrationDto[]>([]);
-  const isFocused = useIsFocused();
   const router = useRouter();
-
-  useEffect(() => {
-    console.log(`===== currentUser =====`);
-    console.log(currentUser?.uid);
-  //   // awaitでforestoreからデータを取得する
-  //   (async() => {
-  //     const docSnap = await getDoc(doc(db, "tests/test"));
-  //     setTest(docSnap!.data()!.test ?? "hoge");
-    // })();
+  const { currentUser } = useContext(AuthContext);
+  // const  bottomSheetContext  = useContext(BottomSheetModalContext);
+  const  { toggleBottomSheetModal }  = useContext(BottomSheetModalContext);
+  const { celebrationList } = useCelebration(currentUser?.uid!);
 
 
-    // if (!currentUser) return;
-    // const celebrationRepository = new CelebrationRepository(currentUser.uid);
-    // celebrationRepository.getCelebrationList().then((celebrationList) => {
-    //   setCelebrations(celebrationList);
-    // });
-  }, [currentUser]);
 
-  const handleAddCelebration = (): void => {
-    router.push("/add");
+  const handleAddCelebration = async (): Promise<void> => {
+    toggleBottomSheetModal();
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.celebrationDate}>{ currentUser?.uid }</Text>
       <FlatList
-        data={celebrations}
+        data={celebrationList}
         renderItem={({ item }: { item: CelebrationDto }) => (
           <TouchableOpacity
             style={styles.celebrationCard}
-            onPress={() => router.push({
-              pathname: "/detail/[docId]",
-              params: {
-                docId: item.docId!,
-                dayName: item.dayName,
-                date: item.date,
-                reminds: JSON.stringify(item.reminds),
-                memo: item.memo,
-              }
-            })}
+            onPress={() => {}}
           >
             <View>
               <Text style={styles.celebrationTitle}>{ item.dayName }</Text>
