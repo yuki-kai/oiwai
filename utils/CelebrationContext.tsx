@@ -6,9 +6,15 @@ import { CelebrationDto } from '@/types/celebration';
 
 type CelebrationType = {
   celebrations: CelebrationDto[];
+  setCelebrations: (celebrations: CelebrationDto[]) => void;
+  getCelebration: (docId: string) => CelebrationDto | undefined;
 };
 
-export const CelebrationContext = createContext<CelebrationType>({ celebrations: [] });
+export const CelebrationContext = createContext<CelebrationType>({
+  celebrations: [],
+  setCelebrations: () => {},
+  getCelebration: () => undefined,
+});
 
 export const CelebrationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
@@ -18,16 +24,22 @@ export const CelebrationProvider: React.FC<{ children: React.ReactNode }> = ({ c
   useEffect(() => {
     (async () => {
       const celebrationList = await fetchCelebrationList();
-      console.log('--- CelebrationProvider ---');
-      console.log(currentUser?.uid);
+      // console.log('--- CelebrationProvider ---');
+      // console.log(currentUser?.uid);
       setCelebrations(celebrationList);
     })();
   }, [currentUser]);
+
+  const getCelebration = (docId: string): CelebrationDto | undefined => {
+    return celebrations.find((celebration) => celebration.docId === docId);
+  };
 
   return (
     <CelebrationContext.Provider
       value={{
         celebrations,
+        setCelebrations,
+        getCelebration,
       }}
     >
       {children}

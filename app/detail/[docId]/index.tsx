@@ -1,62 +1,55 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
-// import { AuthContext } from "@/utils/authContext";
-import { CelebrationRepository } from "@/repositories/celebration.repository";
 import { CelebrationDto } from "@/types/celebration";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import useDeleteCelebration from "@/hooks/useDeleteCelebration";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/hooks/useTheme";
 import { IconButton, Menu } from "react-native-paper";
-import { Celebration } from "@/models/Celebration";
-import { useIsFocused } from "@react-navigation/native";
+import { CelebrationContext } from "@/utils/CelebrationContext";
+import { useCelebration } from "@/hooks/useCelebration";
+import { AuthContext } from "@/utils/authContext";
 
 export default function DetailScreen() {
   // TODO: read数増えるなら props で渡す
-  // const { currentUser } = useContext(AuthContext);
-  const {
-      docId,
-      dayName,
-      date,
-      reminds,
-      memo,
-    }: {
-      docId: string,
-      dayName: string,
-      date: string,
-      reminds: string,
-      memo?: string,
-    } = useLocalSearchParams();
-  const [celebration, setCelebration] = useState<CelebrationDto>(
-    Celebration.create({ docId, dayName, date, reminds: JSON.parse(reminds), memo })
-  );
+  const { currentUser } = useContext(AuthContext);
+  const { celebrations, setCelebrations, getCelebration } = useContext(CelebrationContext);
+
+  const [celebration, setCelebration] = useState<CelebrationDto | undefined >(undefined);
+
+  const { docId }: { docId: string } = useLocalSearchParams();
+  // const [celebration, setCelebration] = useState<CelebrationDto | null>(
+  //   Celebration.create({ docId, dayName, date, reminds: JSON.parse(reminds), memo })
+
+  useEffect(() => {
+    console.log("=== DetailScreen useEffect ===");
+    const celebration = getCelebration(docId);
+    console.log(celebration);
+    setCelebration(celebration);
+  }, [docId]);
+  // );
+  // console.log(date);
   const [visible, setVisible] = useState(false);
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
-  const { deleteCelebration } = useDeleteCelebration();
+  const { deleteCelebration } = useCelebration(currentUser);
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { theme } = useTheme();
-  const isFocused = useIsFocused();
+  // const isFocused = useIsFocused();
 
   const showAlert = () => {
     Alert.alert("このお祝いを削除しますか？", "この操作は取り消せません", [
       { text: "やめる", style: "cancel" },
       {
         text: "削除する",
-        onPress: () => deleteCelebration(docId),
+        onPress: async () => {
+          await deleteCelebration(docId);
+          setCelebrations(celebrations.filter(celebration => celebration.docId !== docId));
+          router.back();
+        },
       },
     ]);
   };
-
-  // useEffect(() => {
-  //   console.log("=== DetailScreen useEffect ===");
-  //   if (!currentUser || !docId) return;
-  //   const celebrationRepository = new CelebrationRepository(currentUser.uid);
-  //   celebrationRepository.getCelebration(docId).then((celebration) => {
-  //     setCelebration(celebration);
-  //   });
-  // }, [isFocused]);
 
   return (
     <View style={styles.container}>
@@ -94,10 +87,10 @@ export default function DetailScreen() {
                     pathname: "/edit/[docId]",
                     params: {
                       docId,
-                      dayName: celebration?.dayName,
-                      date: celebration?.date,
-                      reminds: JSON.stringify(celebration?.reminds),
-                      memo: celebration?.memo,
+                      // dayName: celebration?.dayName,
+                      // date: celebration?.date,
+                      // reminds: JSON.stringify(celebration?.reminds),
+                      // memo: celebration?.memo,
                     },
                   });
                   closeMenu();
@@ -115,6 +108,10 @@ export default function DetailScreen() {
           ),
         }}
       />
+      <View style={styles.textConfirmWrapper}>
+        <Text style={styles.label}>ID</Text>
+        <Text style={styles.value}>{ docId }</Text>
+      </View>
       <View style={styles.textConfirmWrapper}>
         <Text style={styles.label}>お祝いする日</Text>
         <Text style={styles.value}>{ celebration?.dayName }</Text>

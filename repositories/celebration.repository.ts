@@ -118,6 +118,7 @@ export class CelebrationRepository {
   }
 
   public async deleteCelebration(docId: string): Promise<void> {
+    await this.collectionRef.doc(docId).delete();
     // await deleteDoc(doc(db, this.path, docId));
     // // TODO: エラーハンドリング
   }

@@ -17,7 +17,7 @@ export const useCelebration = (currentUser: FirebaseAuthTypes.User | undefined) 
     if (!currentUser) return;
     setUser(currentUser);
     console.log("--- useCelebration useEffect ---");
-    console.log(user);
+    // console.log(user);
   }, [currentUser]);
 
 
@@ -48,12 +48,23 @@ export const useCelebration = (currentUser: FirebaseAuthTypes.User | undefined) 
     }
   };
 
+  const deleteCelebration = async (docId: string): Promise<void> => {
+    if (!user) return;
+    const celebrationRepository = new CelebrationRepository(user.uid);
+    try {
+      await celebrationRepository.deleteCelebration(docId);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return {
     loading,
     celebration,
     celebrationList,
     fetchCelebrationList,
     addCelebration,
+    deleteCelebration,
   };
 };
 
