@@ -8,6 +8,8 @@ import { CelebrationRepository } from "@/repositories/celebration.repository";
 import { CelebrationDto } from "@/types/celebration";
 import { useIsFocused } from "@react-navigation/native";
 import { useCelebration } from "@/hooks/useCelebration";
+import AddScreen from "@/components/AddScreen";
+import { CelebrationContext } from "@/utils/CelebrationContext";
 
 // import { db } from "@/firebaseConfig";
 // import { useRouter } from "expo-router";
@@ -16,13 +18,26 @@ export default function TabIndexScreen() {
   const router = useRouter();
   const { currentUser } = useContext(AuthContext);
   // const  bottomSheetContext  = useContext(BottomSheetModalContext);
-  const  { toggleBottomSheetModal }  = useContext(BottomSheetModalContext);
-  const { celebrationList } = useCelebration(currentUser?.uid!);
+  const { celebrations } = useContext(CelebrationContext);
+  const { toggleBottomSheetModal } = useContext(BottomSheetModalContext);
+  // const { fetchCelebrationList } = useCelebration(currentUser?.uid);
+  const [celebrationList, setCelebrationList] = useState<CelebrationDto[]>([]);
 
+  useEffect(() => {
+    console.log("=== index useEffect ===");
+    console.log(celebrations);
+    setCelebrationList(celebrations);
+  }, [celebrations]);
 
 
   const handleAddCelebration = async (): Promise<void> => {
-    toggleBottomSheetModal();
+    toggleBottomSheetModal(
+      <AddScreen onAddCelebration={handleCelebrationAdded} />
+    );
+  };
+
+  const handleCelebrationAdded = (newCelebration: CelebrationDto) => {
+    setCelebrationList((prevCelebrationList) => [...prevCelebrationList, newCelebration]);
   };
 
   return (

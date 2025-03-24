@@ -6,7 +6,7 @@ import { AuthRepository } from "@/repositories/auth.repository";
 const AuthContext = createContext<AuthContextType>({ currentUser: undefined });
 
 const AuthProvider = (props: PropsWithChildren) => {
-  const [currentUser, setCurrentUser] = useState<FirebaseAuthTypes.User | null | undefined>(undefined);
+  const [currentUser, setCurrentUser] = useState<FirebaseAuthTypes.User | undefined>(undefined);
 
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(async (authUser: FirebaseAuthTypes.User | null) => {
