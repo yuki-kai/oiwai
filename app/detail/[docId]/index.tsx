@@ -25,7 +25,7 @@ export default function DetailScreen() {
     const celebration = getCelebration(docId);
     console.log(celebration);
     setCelebration(celebration);
-  }, [docId]);
+  }, [docId, celebrations]);
   // );
   // console.log(date);
   const [visible, setVisible] = useState(false);

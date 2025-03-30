@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -10,45 +10,39 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { InputCelebration } from "@/types/celebration";
+import { CelebrationDto, InputCelebration } from "@/types/celebration";
 import { Celebration } from "@/models/Celebration";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { convertDateString, dateFromString } from "@/utils/dateFormat";
-import useEditCelebration from "@/hooks/useEditCelebration";
+import { useCelebration } from "@/hooks/useCelebration";
 import { useTheme } from "@/hooks/useTheme";
 import AddButton from "@/components/AddButton";
 import Checkbox from "expo-checkbox";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { CelebrationContext } from "@/utils/CelebrationContext";
+import { AuthContext } from "@/utils/authContext";
 
 export default function EditScreen() {
   const { theme } = useTheme();
-  const { editCelebration } = useEditCelebration();
+  const router = useRouter();
+  const { celebrations, setCelebrations, getCelebration } = useContext(CelebrationContext);
+  const { currentUser } = useContext(AuthContext);
+  const { editCelebration, fetchCelebration, fetchCelebrationList } = useCelebration(currentUser);
   const [showPicker, setShowPicker] = useState(false);
-  const {
-    docId,
-    dayName,
-    date,
-    reminds,
-    memo,
-  }: {
-    docId: string,
-    dayName: string,
-    date: string,
-    reminds: string,
-    memo?: string,
-  } = useLocalSearchParams();
+  const [celebration, setCelebration] = useState<CelebrationDto | undefined >(undefined);
+  const { docId }: { docId: string } = useLocalSearchParams();
   const [currentDate, setCurrentDate] = useState<Date>(
-    new Date(dateFromString(date)),
+    new Date(celebration?.date || ""),
   );
 
   const { control, handleSubmit, reset, watch, formState } = useForm<InputCelebration>({
     mode: "onChange",
     defaultValues: {
-      dayName: dayName,
+    //   dayName: celebration?.dayName,
       date: currentDate,
-      reminds: JSON.parse(reminds),
-      memo: memo,
+    //   reminds: celebration?.reminds,
+    //   memo: celebration?.memo,
     },
   });
   const { fields } = useFieldArray<InputCelebration>({
@@ -58,9 +52,23 @@ export default function EditScreen() {
   const dayNameValue = watch("dayName", "");
   const memoValue = watch("memo", "");
 
+  useEffect(() => {
+    console.log("=== EditScreen useEffect ===");
+    const celebration = getCelebration(docId);
+    console.log(celebration);
+    // setCelebration(celebration);
+    if (!celebration) return;
+    reset({
+      dayName: celebration.dayName,
+      date: dateFromString(celebration.date),
+      reminds: celebration.reminds,
+      memo: celebration.memo,
+    });
+  }, [docId, celebration]);
+
   const toggleDatetimePicker = () => {setShowPicker(!showPicker);};
 
-  const handleEditCelebration = (data: InputCelebration) => {
+  const handleEditCelebration = async (data: InputCelebration) => {
     const dateString = convertDateString(data.date);
     const celebration = Celebration.create({
       docId: docId,
@@ -69,7 +77,14 @@ export default function EditScreen() {
       reminds: data.reminds,
       memo: data.memo,
     });
-    editCelebration(celebration);
+    await editCelebration(celebration);
+    const editedCelebration = await fetchCelebration(docId);
+    const celebrationList = await fetchCelebrationList();
+    const updatedCelebrationList = celebrationList.map(celebration => 
+      celebration.docId === editedCelebration?.docId && editedCelebration ? editedCelebration : celebration
+    );
+    setCelebrations(updatedCelebrationList);
+    router.back();
   };
 
   return (

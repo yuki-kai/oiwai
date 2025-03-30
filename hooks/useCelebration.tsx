@@ -38,11 +38,38 @@ export const useCelebration = (currentUser: FirebaseAuthTypes.User | undefined) 
     }
   };
 
+  const fetchCelebration = async (docId: string): Promise<CelebrationDto | undefined> => {
+    if (!user) return;
+    // console.log(currentUser?.uid!);
+    // const celebrationRepository = new CelebrationRepository(uid);
+    const celebrationRepository = new CelebrationRepository(user.uid);
+    try {
+      setLoading(true);
+      const celebration = await celebrationRepository.getCelebration(docId);
+      return celebration;
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }finally {
+      setLoading(false);
+    }
+  };
+
   const addCelebration = async (celebration: CelebrationDto): Promise<void> => {
     if (!user) return;
     const celebrationRepository = new CelebrationRepository(user.uid);
     try {
       await celebrationRepository.createCelebration(celebration);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const editCelebration = async (celebration: CelebrationDto): Promise<void> => {
+    if (!user) return;
+    const celebrationRepository = new CelebrationRepository(user.uid);
+    try {
+      await celebrationRepository.editCelebration(celebration);
     } catch (error) {
       console.error(error);
     }
@@ -63,7 +90,9 @@ export const useCelebration = (currentUser: FirebaseAuthTypes.User | undefined) 
     celebration,
     celebrationList,
     fetchCelebrationList,
+    fetchCelebration,
     addCelebration,
+    editCelebration,
     deleteCelebration,
   };
 };

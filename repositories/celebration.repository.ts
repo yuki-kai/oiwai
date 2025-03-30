@@ -73,6 +73,13 @@ export class CelebrationRepository {
   };
 
   public async getCelebration(docId: string): Promise<CelebrationDto> {
+    const celebration = await this.collectionRef.doc(docId).get();
+    return {
+      ...celebration.data() as CelebrationDto,
+      docId: celebration.id,
+    }
+
+
     // const docSnap = await getDoc(doc(db, this.path, docId).withConverter(celebrationConverter));
     // const celebration = docSnap.data();
     // if (!celebration) {
@@ -107,6 +114,14 @@ export class CelebrationRepository {
   }
 
   public async editCelebration(celebration: CelebrationDto): Promise<void> {
+    console.log("===== editCelebration =====")
+    console.log(celebration)
+    await this.collectionRef.doc(celebration.docId!).set({
+      dayName: celebration.dayName,
+      date: celebration.date,
+      reminds: celebration.reminds,
+      memo: celebration.memo,
+    });
     // const docRef = doc(db, this.path, celebration.docId!).withConverter(celebrationConverter);
     // await setDoc(docRef, {
     //   dayName: celebration.dayName,
