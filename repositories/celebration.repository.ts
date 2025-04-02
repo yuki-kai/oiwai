@@ -17,7 +17,7 @@ import { CelebrationDto } from "../types/celebration";
 //   SnapshotOptions,
 // } from "firebase/firestore";
 // import { db } from "@/firebaseConfig";
-import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import firestore, { FirebaseFirestoreTypes, Timestamp } from '@react-native-firebase/firestore';
 
 const celebrationConverter = {
   fromFirestore(snapshot: FirebaseFirestoreTypes.QueryDocumentSnapshot): CelebrationDto {
@@ -61,22 +61,29 @@ export class CelebrationRepository {
   }
 
   public async getCelebrationList(): Promise<CelebrationDto[]> {
-    const celebrations = await this.collectionRef.get();
+    const celebrationDocuments = await this.collectionRef.get();
     console.log('==========');
-    console.log(celebrations.size);
-    return celebrations.docs.map((celebration) => {
+    console.log(celebrationDocuments.size);
+    return celebrationDocuments.docs.map((celebrationDocument) => {
+      const celebration = celebrationDocument.data();
       return {
-        ...celebration.data(),
-        docId: celebration.id,
+        ...celebration,
+        date: celebration.date.toDate(),
+        docId: celebrationDocument.id,
       } as CelebrationDto;
     });
   };
 
   public async getCelebration(docId: string): Promise<CelebrationDto> {
-    const celebration = await this.collectionRef.doc(docId).get();
+    const celebrationDocument = await this.collectionRef.doc(docId).get();
+    const celebration = celebrationDocument.data();
+    if (!celebration) {
+      throw new Error("Document not found");
+    }
     return {
-      ...celebration.data() as CelebrationDto,
-      docId: celebration.id,
+      ...celebration as CelebrationDto,
+      date: celebration.date.toDate(),
+      docId: celebrationDocument.id,
     }
 
 
@@ -92,7 +99,7 @@ export class CelebrationRepository {
     //   reminds: celebration.reminds,
     //   memo: celebration.memo,
     // };
-    return {} as CelebrationDto;
+    // return {} as CelebrationDto;
   }
 
   public async createCelebration(celebration: CelebrationDto): Promise<void> {
@@ -100,7 +107,7 @@ export class CelebrationRepository {
     console.log(celebration)
     await this.collectionRef.add({
       dayName: celebration.dayName,
-      date: celebration.date,
+      date: Timestamp.fromDate(celebration.date),
       reminds: celebration.reminds,
       memo: celebration.memo,
     });
@@ -118,7 +125,7 @@ export class CelebrationRepository {
     console.log(celebration)
     await this.collectionRef.doc(celebration.docId!).set({
       dayName: celebration.dayName,
-      date: celebration.date,
+      date: Timestamp.fromDate(celebration.date),
       reminds: celebration.reminds,
       memo: celebration.memo,
     });

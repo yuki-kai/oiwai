@@ -60,7 +60,7 @@ export default function EditScreen() {
     if (!celebration) return;
     reset({
       dayName: celebration.dayName,
-      date: dateFromString(celebration.date),
+      date: celebration.date,
       reminds: celebration.reminds,
       memo: celebration.memo,
     });
@@ -69,11 +69,11 @@ export default function EditScreen() {
   const toggleDatetimePicker = () => {setShowPicker(!showPicker);};
 
   const handleEditCelebration = async (data: InputCelebration) => {
-    const dateString = convertDateString(data.date);
+    // const dateString = convertDateString(data.date);
     const celebration = Celebration.create({
       docId: docId,
       dayName: data.dayName,
-      date: dateString,
+      date: data.date,
       reminds: data.reminds,
       memo: data.memo,
     });
@@ -145,7 +145,7 @@ export default function EditScreen() {
                     <Pressable onPress={toggleDatetimePicker}>
                       <TextInput
                         style={styles.input}
-                        value={convertDateString(value)}
+                        value={value.toLocaleDateString()}
                         placeholder="年月日"
                         editable={false}
                         onPressIn={() => {

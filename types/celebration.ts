@@ -1,7 +1,7 @@
 export type CelebrationDto = {
 	docId?: string;
 	dayName: string;
-	date: string; // yyyy/mm/dd
+	date: Date; // yyyy/mm/dd
 	reminds: Remind[];
 	memo?: string;
 	createdAt?: Date;

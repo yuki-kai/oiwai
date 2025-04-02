@@ -14,7 +14,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import AddButton from "@/components/AddButton";
 // import useAddaddCelebration from "@/hooks/useAddCelebration";
 // import { Celebration } from "@/models/Celebration";
-import { convertDateString } from "@/utils/dateFormat";
+// import { convertDateString } from "@/utils/dateFormat";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { CelebrationDto, InputCelebration, defaultReminds } from "@/types/celebration";
 import Checkbox from "expo-checkbox";
@@ -63,10 +63,10 @@ export default function AddScreen({ onAddCelebration }: AddScreenProps) {
   };
 
   const handleAddCelebration = async (data: InputCelebration) => {
-    const dateString = convertDateString(data.date);
+    // const dateString = convertDateString(data.date);
     const celebration = Celebration.create({
       dayName: data.dayName,
-      date: dateString,
+      date: data.date,
       reminds: data.reminds,
       memo: data.memo,
     });
@@ -123,7 +123,7 @@ export default function AddScreen({ onAddCelebration }: AddScreenProps) {
                     <Pressable onPress={toggleDatetimePicker}>
                       <TextInput
                         style={styles.input}
-                        value={convertDateString(value)}
+                        value={value.toLocaleDateString()}
                         placeholder="年月日"
                         editable={false}
                         onPressIn={() => {

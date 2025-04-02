@@ -2,7 +2,7 @@ import { CelebrationDto, Remind } from "../types/celebration";
 
 type CelebrationProps = {
 	dayName: string;
-	date: string;
+	date: Date;
 	reminds: Remind[];
 	memo?: string;
 	docId?: string;
@@ -10,7 +10,7 @@ type CelebrationProps = {
 
 export class Celebration {
 	public readonly dayName: string;
-	public readonly date: string; // yyyy/mm/dd
+	public readonly date: Date;
 	public readonly reminds: Remind[];
 	public readonly memo?: string;
 	public readonly docId?: string;

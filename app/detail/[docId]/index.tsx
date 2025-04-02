@@ -119,7 +119,7 @@ export default function DetailScreen() {
 
       <View style={styles.textConfirmWrapper}>
         <Text style={styles.label}>年月日</Text>
-        <Text style={styles.value}>{ celebration?.date }</Text>
+        <Text style={styles.value}>{ celebration?.date.toLocaleDateString() }</Text>
       </View>
 
       <View style={styles.remindsConfirmWrapper}>

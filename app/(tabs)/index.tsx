@@ -55,7 +55,7 @@ export default function TabIndexScreen() {
           >
             <View>
               <Text style={styles.celebrationTitle}>{ item.dayName }</Text>
-              <Text style={styles.celebrationDate}>{ item.date }</Text>
+              <Text style={styles.celebrationDate}>{ item.date.toLocaleDateString() }</Text>
             </View>
           </TouchableOpacity>
         )}
