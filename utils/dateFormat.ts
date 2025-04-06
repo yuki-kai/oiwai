@@ -19,3 +19,16 @@ export const dateFromString = (date: string): Date => {
 	// yyyy/mm/dd を yyyy-mm-dd に変換 (yyyy/mm/dd だと NaN になるため)
 	return new Date(date.replaceAll("/", "-"));
 };
+
+export const countDownCelebrateDay = (celebrationDate: Date): string => {
+	const diffTime = celebrationDate.getTime() - (new Date()).getTime();
+	const diffDayCount = Math.ceil(diffTime / 86400000);
+	switch (diffDayCount) {
+		case 0:
+			return '本日';
+		case 1:
+			return '明日';
+		default:
+			return `あと ${diffDayCount} 日`;
+	}
+};

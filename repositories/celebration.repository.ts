@@ -61,9 +61,12 @@ export class CelebrationRepository {
   }
 
   public async getCelebrationList(): Promise<CelebrationDto[]> {
-    const celebrationDocuments = await this.collectionRef.get();
-    console.log('==========');
-    console.log(celebrationDocuments.size);
+    const today = new Date(new Date().setHours(0, 0, 0, 0))
+    // 今日以降の記念日を昇順に取得
+    const celebrationDocuments = await this.collectionRef
+      .orderBy('date', 'asc')
+      .startAfter(Timestamp.fromDate(today))
+      .get();
     return celebrationDocuments.docs.map((celebrationDocument) => {
       const celebration = celebrationDocument.data();
       return {

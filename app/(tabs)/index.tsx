@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React,{ useContext, useEffect, useState } from "react";
-import { Button, FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, FlatList, Pressable, SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AuthContext } from "@/utils/authContext";
 import { BottomSheetModalContext } from "@/utils/BottomSheetModalContext";
 import AddButton from "@/components/AddButton";
@@ -8,6 +8,8 @@ import { CelebrationDto } from "@/types/celebration";
 import { useCelebration } from "@/hooks/useCelebration";
 import AddScreen from "@/components/AddScreen";
 import { CelebrationContext } from "@/utils/CelebrationContext";
+import { countDownCelebrateDay } from "@/utils/dateFormat";
+import { themes } from '@/constants/ColorTheme';
 
 // import { db } from "@/firebaseConfig";
 // import { useRouter } from "expo-router";
@@ -43,28 +45,46 @@ export default function TabIndexScreen() {
     setCelebrationList(celebrationList); // これ不要では？ => 多分レンダリング無限ループ避けるため
   };
 
+  const CelebrationCard = ({ celebration }: { celebration: CelebrationDto }) => {
+    return (
+      <TouchableOpacity
+        style={styles.celebrationCard}
+        onPress={() => router.push(`/detail/${celebration.docId}`)}
+      >
+        <View style={styles.cardContent}>
+          <View>
+            <Text style={styles.celebrationDate}>{ celebration.date.toLocaleDateString() }</Text>
+            <Text style={styles.celebrationTitle}>{ celebration.dayName }</Text>
+          </View>
+          <Text>{ countDownCelebrateDay(celebration.date) }</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.celebrationDate}>{ currentUser?.uid }</Text>
-      <FlatList
-        data={celebrationList}
+      <SectionList
+        sections={celebrationList.reduce((acc, celebration) => {
+          const yearMonth = celebration.date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long' });
+          const existingSection = acc.find(section => section.title === yearMonth);
+          if (existingSection) {
+            existingSection.data.push(celebration);
+          } else {
+            acc.push({
+              title: yearMonth,
+              data: [celebration]
+            });
+          }
+          return acc;
+        }, [] as { title: string; data: CelebrationDto[] }[])}
         renderItem={({ item }: { item: CelebrationDto }) => (
-          <TouchableOpacity
-            style={styles.celebrationCard}
-            onPress={() => router.push(`/detail/${item.docId}`)}
-          >
-            <View>
-              <Text style={styles.celebrationTitle}>{ item.dayName }</Text>
-              <Text style={styles.celebrationDate}>{ item.date.toLocaleDateString() }</Text>
-            </View>
-          </TouchableOpacity>
+          <CelebrationCard celebration={item} />
         )}
-        ListEmptyComponent={
-          <View>
-            <Text style={styles.listEmptyCard}>表示するお祝いがありません。</Text>
-            <Text style={styles.listEmptyCard}>記念日を追加してみましょう！</Text>
-          </View>
-        }
+        renderSectionHeader={({section: {title}}) => (
+          <Text style={styles.sectionHeader}>{title}</Text>
+        )}
+        stickySectionHeadersEnabled={false}
       />
       <AddButton
         label="記念日を追加"
@@ -78,6 +98,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  sectionHeader: {
+    backgroundColor: themes.default.Text.secondary,
+    fontWeight: "bold",
+    fontSize: 16,
+    paddingVertical: 4,
+    paddingHorizontal: 16,
+  },
   celebrationCard: {
     backgroundColor: "#ffffff",
 		flexDirection: "row",
@@ -87,6 +114,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
 		borderBottomWidth: 1,
 		borderColor: "rgba(0,0,0,0.15)",
+  },
+  cardContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
   },
 	celebrationTitle: {
 		fontSize: 16,
