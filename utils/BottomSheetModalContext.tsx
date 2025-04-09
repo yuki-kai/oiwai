@@ -6,6 +6,7 @@ import Animated, {
   SlideInDown,
   SlideOutDown,
 } from 'react-native-reanimated';
+import { themes } from '@/constants/ColorTheme';
 
 type BottomSheetContextType = {
   toggleBottomSheetModal: (content?: React.ReactNode) => void;
@@ -43,7 +44,13 @@ export const BottomSheetModalProvider: React.FC<{ children: React.ReactNode }> =
             entering={SlideInDown}
             exiting={SlideOutDown}
           >
-            <Button title="とじる" onPress={() => toggleBottomSheetModal()} />
+            <Animated.View style={styles.header}>
+              <Button 
+                title="閉じる" 
+                onPress={() => toggleBottomSheetModal()} 
+                color={themes.default.Text.primary}
+              />
+            </Animated.View>
             {content}
           </Animated.View>
         </>
@@ -55,14 +62,29 @@ export const BottomSheetModalProvider: React.FC<{ children: React.ReactNode }> =
 const styles = StyleSheet.create({
   sheet: {
     backgroundColor: 'white',
-    padding: 16,
-    height: '90%',
+    height: '95%',
     width: '100%',
     position: 'absolute',
     bottom: -20 * 1.1,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
     zIndex: 1,
+  },
+  header: {
+    backgroundColor: themes.default.Backgroud.primary,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+  },
+  content: {
+    flex: 1,
+    padding: 16,
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
