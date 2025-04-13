@@ -4,7 +4,7 @@ import { CelebrationDto } from "../types/celebration";
 import { useIsFocused } from "@react-navigation/native";
 import { AuthContext } from "@/utils/authContext";
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
-// import { scheduleRemindNotification } from "../utils/pushNotification";
+import { scheduleRemindNotification } from "../utils/pushNotification";
 
 
 export const useCelebration = (currentUser: FirebaseAuthTypes.User | undefined) => {
@@ -59,6 +59,9 @@ export const useCelebration = (currentUser: FirebaseAuthTypes.User | undefined) 
     if (!user) return;
     const celebrationRepository = new CelebrationRepository(user.uid);
     try {
+      // プッシュ通知をスケジュールする
+      // TODO: プッシュ通知の識別子を保存してcancelScheduledNotificationAsyncで削除できるようにする
+      await scheduleRemindNotification(celebration);
       await celebrationRepository.createCelebration(celebration);
     } catch (error) {
       console.error(error);
@@ -69,6 +72,8 @@ export const useCelebration = (currentUser: FirebaseAuthTypes.User | undefined) 
     if (!user) return;
     const celebrationRepository = new CelebrationRepository(user.uid);
     try {
+      // プッシュ通知をリスケジュールする
+      await scheduleRemindNotification(celebration);
       await celebrationRepository.editCelebration(celebration);
     } catch (error) {
       console.error(error);
@@ -96,33 +101,3 @@ export const useCelebration = (currentUser: FirebaseAuthTypes.User | undefined) 
     deleteCelebration,
   };
 };
-
-
-// const useAddCelebration = () => {
-//   const { currentUser } = useContext(AuthContext);
-//   const navigation = useNavigation();
-//   const addCelebration = (celebration: CelebrationDto) => {
-//     console.log("useAddCelebration: " + celebration);
-//     const celebrationRepository = new CelebrationRepository(currentUser!.uid!);
-//     celebrationRepository.createCelebration(celebration)
-//       .then((docRef) => {
-//         // scheduleRemindNotification(celebration.date, celebration.reminds);
-//         navigation.goBack();
-//       })
-//       .catch((error) => {
-//         console.log("失敗" + error);
-//       })
-//       .finally(() => {
-//         console.log("終了");
-//       });
-//   };
-
-//   return { addCelebration };
-// };
-
-// export default useAddCelebration;
-
-// export const useGetCelebration = async(uid: string): Promise<CelebrationDto[]> => {
-//   const celebrationRepository = new CelebrationRepository(uid);
-//   return await celebrationRepository.getCelebrationList();
-// };

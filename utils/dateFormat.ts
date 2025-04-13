@@ -25,7 +25,7 @@ export const countDownCelebrateDay = (celebrationDate: Date): string => {
 	const diffDayCount = Math.ceil(diffTime / 86400000);
 	switch (diffDayCount) {
 		case 0:
-			return '本日';
+			return '今日';
 		case 1:
 			return '明日';
 		default:
