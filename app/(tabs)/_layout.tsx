@@ -21,16 +21,6 @@ export default function TabLayout() {
           },
         }}
       />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'セッティング',
-          headerTintColor: theme.Text.primary,
-          headerStyle: {
-            backgroundColor: theme.Backgroud.primary,
-          },
-        }}
-      />
     </Tabs>
   );
 }

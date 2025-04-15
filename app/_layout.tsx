@@ -60,14 +60,6 @@ export default function RootLayout() {
                   headerShown: false,
                   headerTitle: "ホーム"
                 }} />
-                <Stack.Screen name="add" options={{
-                  headerShown: true,
-                  headerTitle: "追加画面",
-                  headerTintColor: theme.Text.primary,
-                  headerStyle: {
-                    backgroundColor: theme.Backgroud.primary,
-                  },
-                }} />
                 <Stack.Screen name="+not-found" />
               </Stack>
               <StatusBar style="auto" />

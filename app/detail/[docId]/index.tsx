@@ -109,10 +109,6 @@ export default function DetailScreen() {
         }}
       />
       <View style={styles.textConfirmWrapper}>
-        <Text style={styles.label}>ID</Text>
-        <Text style={styles.value}>{ docId }</Text>
-      </View>
-      <View style={styles.textConfirmWrapper}>
         <Text style={styles.label}>お祝いする日</Text>
         <Text style={styles.value}>{ celebration?.dayName }</Text>
       </View>
