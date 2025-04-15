@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import 'react-native-gesture-handler';
 // import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -18,15 +19,35 @@ import 'expo-dev-client';
 
 export default function RootLayout() {
   const { theme } = useTheme();
+  const [pushNotificationGranted, setPushNotificationGranted] = useState(true);
+
+  useEffect(() => {
+    const requestPushNotificationPermission = async () => {
+      // アプリの通知設定を取得
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      // 許可されていなければ許可を求める
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        setPushNotificationGranted(false);
+        return;
+      }
+    };
+
+    requestPushNotificationPermission();
+  }, []);
 
   // プッシュ通知の受け取り方を設定
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
 
   return (
     <ThemeProvider initialTheme={themes.default}>
