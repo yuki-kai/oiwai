@@ -6,8 +6,7 @@ export const scheduleRemindNotification = async (celebration: CelebrationDto) =>
   console.log("スケジュール通知" + celebration.date);
   celebration.reminds.forEach((remind) => {
     if (remind.isChecked) {
-      console.log(remind.label);
-      const remindDate = celebration.date;
+      const remindDate = new Date(celebration.date);
       remindDate.setDate(remindDate.getDate() - remind.value);
       console.log(remindDate.getFullYear() + "/" + (remindDate.getMonth() + 1) + "/" + remindDate.getDate());
       Notifications.scheduleNotificationAsync({

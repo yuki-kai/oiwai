@@ -85,6 +85,12 @@ export default function TabIndexScreen() {
           <Text style={styles.sectionHeader}>{title}</Text>
         )}
         stickySectionHeadersEnabled={false}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.listEmptyCard}>表示するお祝いがありません。</Text>
+            <Text style={styles.listEmptyCard}>記念日を追加してみましょう！</Text>
+          </View>
+        )}
       />
       <AddButton
         label="記念日を追加"
@@ -130,6 +136,9 @@ const styles = StyleSheet.create({
 		lineHeight: 16,
 		color: "#848484",
 	},
+  emptyContainer: {
+    paddingVertical: '50%',
+  },
 	listEmptyCard: {
 		textAlign: "center",
 		fontSize: 16,

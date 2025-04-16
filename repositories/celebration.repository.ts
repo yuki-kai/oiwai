@@ -65,7 +65,6 @@ export class CelebrationRepository {
     // 今日以降の記念日を昇順に取得
     const celebrationDocuments = await this.collectionRef
       .orderBy('date', 'asc')
-      .startAfter(Timestamp.fromDate(today))
       .get();
     return celebrationDocuments.docs.map((celebrationDocument) => {
       const celebration = celebrationDocument.data();
