@@ -10,19 +10,23 @@ const AuthProvider = (props: PropsWithChildren) => {
 
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(async (authUser: FirebaseAuthTypes.User | null) => {
-      if (authUser) {
-        const authRepository = new AuthRepository(authUser.uid)
-        // FirebaseAuth にアカウントはあるが Firestore にドキュメントがない場合は作成
-        const user = await authRepository.getCurrentUser();
-        if (!user) {
-          await authRepository.setUser();
+      try {
+        if (authUser) {
+          const authRepository = new AuthRepository(authUser.uid)
+          // FirebaseAuth にアカウントはあるが Firestore にドキュメントがない場合は作成
+          const user = await authRepository.getCurrentUser();
+          if (!user) {
+            await authRepository.setUser();
+          }
+          setCurrentUser(authUser);
+        } else {
+          await auth().signInAnonymously();
         }
-        setCurrentUser(authUser);
-      } else {
-        await auth().signInAnonymously();
+      } catch (error) {
+        console.error('認証エラー:', error);
       }
     });
-    return unsubscribe();
+    return () => unsubscribe();
   }, []);
 
   return (
