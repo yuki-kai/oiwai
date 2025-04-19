@@ -14,7 +14,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'インデックス',
+          title: 'お祝いリスト',
           headerTintColor: theme.Text.primary,
           headerStyle: {
             backgroundColor: theme.Backgroud.primary,
