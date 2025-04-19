@@ -23,7 +23,7 @@ const AuthProvider = (props: PropsWithChildren) => {
       }
     });
     return unsubscribe();
-  }, [currentUser]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ currentUser }}>
